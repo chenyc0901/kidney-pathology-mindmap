@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>腎臟病理學心智圖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one horizontal tree per lecture, root on the left, growing right; click a node to open its branch. */
+:root{
+  --bg:#fbf8f9; --panel:#ffffff; --ink:#24191d; --muted:#6c5d63;
+  --accent:#6b1e3a; --accent-ink:#ffffff; --second:#0f6e7c; --second-soft:#e2f0f2;
+  --soft:#f4e9ed; --line:#cdb6be; --mark:#b8660a;
+  --display:"Noto Serif TC","Songti TC",serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#191316; --panel:#221a1e; --ink:#f1e8eb; --muted:#b3a2a9;
+    --accent:#e08aa6; --accent-ink:#22090f; --second:#6cc3cf; --second-soft:#143338;
+    --soft:#33222a; --line:#5d4650; --mark:#e9a857;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#191316; --panel:#221a1e; --ink:#f1e8eb; --muted:#b3a2a9;
+  --accent:#e08aa6; --accent-ink:#22090f; --second:#6cc3cf; --second-soft:#143338;
+  --soft:#33222a; --line:#5d4650; --mark:#e9a857;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+header{padding:28px 24px 12px;max-width:1200px}
+h1{font-family:var(--display);font-size:30px;line-height:1.25;margin:0 0 6px;color:var(--accent);text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:65ch}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 24px;position:sticky;top:0;background:var(--bg);z-index:2;border-bottom:1px solid var(--line)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;cursor:pointer;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 14px}
+button:hover{border-color:var(--accent)}
+button:focus-visible,.label:focus-visible{outline:3px solid var(--second);outline-offset:2px}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.tools{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.hint{padding:10px 24px 0;color:var(--muted);font-size:13px}
+.scroll{overflow-x:auto;padding:18px 24px 48px}
+.tree{display:inline-flex;align-items:center;min-width:max-content}
+.node{display:flex;align-items:center}
+.kids{position:relative;margin-left:22px;display:flex;flex-direction:column}
+.kids::before{content:"";position:absolute;left:-22px;top:50%;width:22px;border-top:1.5px solid var(--line)}
+.kids[hidden]{display:none}
+.branch{position:relative;padding:4px 0 4px 22px;display:flex;align-items:center}
+.branch::before{content:"";position:absolute;left:0;top:50%;width:22px;border-top:1.5px solid var(--line)}
+.branch::after{content:"";position:absolute;left:0;top:0;bottom:0;border-left:1.5px solid var(--line)}
+.branch:first-child::after{top:50%}
+.branch:last-child::after{bottom:50%}
+.branch:only-child::after{display:none}
+.label{border-radius:10px;padding:6px 12px;max-width:30ch;text-align:left;border:1.5px solid transparent;background:none;color:var(--ink);line-height:1.4}
+.label small{display:block;color:inherit;opacity:.8;font-size:12px;font-weight:400}
+button.label{position:relative;padding-right:30px}
+button.label::after{content:"＋";position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--mark);font-weight:700}
+button.label[aria-expanded="true"]::after{content:"－"}
+.d0>.label{background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-size:20px;padding:12px 18px;max-width:14ch}
+.d0>button.label::after{color:var(--accent-ink)}
+.d1>.label{background:var(--second);color:var(--panel);font-weight:700;font-size:16px}
+.d1>button.label::after{color:var(--panel)}
+.d2>.label{background:var(--soft);border-color:var(--line);font-weight:700;color:var(--accent)}
+.d3>.label{background:var(--second-soft);color:var(--second);font-weight:500;font-size:14px}
+.leaf>.label{background:var(--panel);border-color:var(--line);font-size:14px;max-width:38ch;border-radius:6px}
+.label b{color:var(--accent)}
+footer{padding:0 24px 32px;color:var(--muted);font-size:12px;max-width:80ch}
+@media (max-width:520px){h1{font-size:24px}.tools{margin-left:0}.label{max-width:24ch}.leaf>.label{max-width:26ch}}
+@media (prefers-reduced-motion:no-preference){.label{transition:border-color .15s}}
+</style>
+</head>
+<body>
+<header>
+  <h1>腎臟病理學心智圖</h1>
+  <p class="sub">Robbins Basic Pathology 第 14 章 Kidney and Its Collecting System，三堂課的重點整理。專有名詞保留英文並附中文。</p>
+</header>
+<div class="bar">
+  <div class="tabs" role="tablist" aria-label="課程">
+    <button role="tab" id="tab-0" data-i="0">總覽</button>
+    <button role="tab" id="tab-1" data-i="1">第一堂 Nephrotic</button>
+    <button role="tab" id="tab-2" data-i="2">第二堂 Nephritic 與腎小管間質</button>
+    <button role="tab" id="tab-3" data-i="3">第三堂 血管、囊腫、阻塞、腫瘤</button>
+  </div>
+  <div class="tools">
+    <button id="open-all">全部展開</button>
+    <button id="close-all">收合</button>
+  </div>
+</div>
+<p class="hint">點有「＋」的節點展開下一層；圖太寬時可左右捲動。</p>
+<div class="scroll"><div class="tree" id="tree"></div></div>
+<footer>內容依 Robbins Basic Pathology, 10th ed., Chapter 14 整理，並含少量課堂補充（檢驗連結）。數字請以課本為準。</footer>
+
+<script>
+// [label, children?]  — a string is a leaf. "A|b" renders b as a small second line.
+const M = [
+["腎臟病理學|總覽", [
+  ["依構造分類|四個 compartment", [
+    ["Glomeruli（腎絲球）", ["多為免疫媒介", "早期：proteinuria（蛋白尿）、hematuria（血尿）"]],
+    ["Tubules（腎小管）", ["多為毒素或感染", "早期：濃縮功能與電解質異常"]],
+    ["Interstitium（間質）", ["常與腎小管一起受損", "感染、藥物過敏"]],
+    ["Blood vessels（血管）", ["高血壓、血管炎、TMA", "結果是缺血"]],
+    "任一構造受損都會波及其他 → 最後走向 end-stage kidney"
+  ]],
+  ["臨床症候群", [
+    ["Azotemia（氮血症）", ["BUN、creatinine 上升，代表 GFR 下降", ["三種來源", ["Prerenal：灌流不足，可逆", "Renal：腎實質疾病", "Postrenal：尿路阻塞"]]]],
+    ["Uremia（尿毒症）", ["Azotemia + 臨床症狀與全身性異常", "代謝性酸中毒、高血鉀、貧血", "腸胃炎、周邊神經病變、fibrinous pericarditis"]],
+    ["Nephrotic syndrome（腎病症候群）", ["Proteinuria ≥ 3.5 g/day", "Hypoalbuminemia（< 3 g/dL）", "全身性水腫", "Hyperlipidemia、lipiduria", "本質：濾網通透性增加"]],
+    ["Nephritic syndrome（腎炎症候群）", ["Hematuria + RBC casts", "蛋白尿較少", "Azotemia、高血壓、少尿", "本質：腎絲球發炎"]],
+    ["其他", ["RPGN：數天至數週腎功能喪失，組織學為 crescents", "AKI：creatinine 急性上升，常少尿", "CKD：進行性結疤；ESRD 需透析或移植", "UTI：菌尿 + 膿尿", "結石：腎絞痛 + 血尿，無 RBC casts"]]
+  ]],
+  ["正常腎絲球|過濾屏障", [
+    "有窗孔的內皮（fenestrae 70–100 nm）",
+    "GBM：type IV collagen（第四型膠原蛋白），帶負電",
+    "Podocyte（足細胞）foot processes；slit diaphragm 由 nephrin 構成",
+    "Mesangial cell：支撐、收縮、吞噬",
+    "通透性取決於大小、電荷、形狀 → albumin 正常不漏出"
+  ]],
+  ["判讀三件事|每個腎絲球疾病", [
+    "LM（光學顯微鏡）：細胞數、膜厚、硬化、新月體",
+    "IF（免疫螢光）：granular 或 linear；哪種抗體與補體",
+    "EM（電子顯微鏡）：沉積物在 GBM 的哪一側；足突是否消失"
+  ]]
+]],
+
+["第一堂|傷害機轉與 Nephrotic 疾病", [
+  ["腎絲球傷害機轉", [
+    ["免疫複合體", [
+      "循環中的複合體沉積，或抗體在原位（in situ）與抗原結合",
+      "IF 為 <b>granular</b>（顆粒狀）",
+      ["沉積位置決定表現", ["Subendothelial（內皮下）：接觸血液，發炎明顯", "Subepithelial（上皮下）：不發炎，以蛋白尿為主", "Mesangial：mesangial 增生"]]
+    ]],
+    ["Anti-GBM 抗體", ["標的：type IV collagen 的 α3 chain", "IF 為 <b>linear</b>（線狀）", "合併肺出血 = Goodpasture syndrome"]],
+    ["補體 alternative pathway 失控", ["C3 低、C4 正常", "Dense deposit disease、C3 GN、atypical HUS"]],
+    ["非免疫機轉", ["Podocyte injury → foot process effacement（足突融合消失）→ 蛋白尿", "Nephron loss → 殘存腎絲球過度過濾 → 硬化（共同終路）"]],
+    ["傷害媒介", ["C5a 吸引嗜中性球與單核球", "C5b–C9 membrane attack complex"]]
+  ]],
+  ["病因分布", ["兒童：約 95% primary，MCD 佔約 65%", "成人：FSGS 與 membranous nephropathy 為主", "成人約 40% 為全身性疾病：糖尿病、amyloidosis、SLE"]],
+  ["Minimal-change disease|MCD 微小變化腎病", [
+    ["機轉", ["不明；推測循環因子傷害 podocyte"]],
+    ["形態", ["LM：正常", "IF：陰性", "EM：足突瀰漫性消失，無沉積物"]],
+    ["臨床", ["1–7 歲最常見", "Selective proteinuria（以 albumin 為主）", "> 90% 兒童對類固醇有反應，但常復發", "預後良好"]]
+  ]],
+  ["FSGS|局部節段性腎絲球硬化", [
+    ["定義", ["Focal：部分腎絲球", "Segmental：腎絲球的一部分"]],
+    ["病因", ["Primary：podocyte injury", "Secondary：HIV、海洛因、nephron loss、基因突變"]],
+    ["形態", ["LM：節段性硬化與 hyalinosis", "IF：硬化區 IgM、C3", "EM：足突消失"]],
+    ["臨床", ["Nonselective proteinuria；較常有血尿與高血壓", "類固醇反應差", "≥ 50% 在 10 年內進入 ESRD", "Collapsing 型（HIV）預後最差"]]
+  ]],
+  ["Membranous nephropathy|膜性腎病變", [
+    ["機轉", ["約 80% primary：anti-PLA2R 自體抗體", "原位免疫複合體 → 補體 → C5b–C9 傷害 podocyte", "Secondary：HBV、梅毒、腫瘤、SLE、NSAIDs、金、汞"]],
+    ["形態", ["LM：微血管壁瀰漫性增厚，無細胞增生", "銀染色：spikes（棘狀突起）", "IF：沿 GBM granular IgG、C3", "EM：<b>subepithelial</b> deposits"]],
+    ["臨床", ["30–60 歲成人", "Nonselective proteinuria；類固醇效果差", "約 40% 在 2–20 年進展至腎衰竭", "成人須排除腫瘤等續發原因"]]
+  ]],
+  ["MPGN|膜性增生性腎絲球腎炎", [
+    ["Type I（免疫複合體型）", ["約佔 80%", "LM：分葉、細胞增生、tram-track（雙軌）", "IF：IgG、C3、C1q、C4", "EM：<b>subendothelial</b> deposits", "續發：SLE、HBV、HCV、cryoglobulinemia"]],
+    ["C3 glomerulopathy", ["Dense deposit disease 與 C3 GN", "C3 nephritic factor 或 Factor H 異常", "IF：只有 C3", "EM：膜內緻密帶狀沉積", "血清 C3 低、C4 正常"]],
+    ["臨床", ["Nephrotic、nephritic 或混合", "預後不佳"]]
+  ]]
+]],
+
+["第二堂|Nephritic 疾病與腎小管間質", [
+  ["Postinfectious GN|PSGN 感染後腎絲球腎炎", [
+    ["機轉", ["A 群鏈球菌（nephritogenic strains）感染後 <b>1–4 週</b>", "免疫複合體 → classical pathway → C3 下降"]],
+    ["形態", ["LM：瀰漫性細胞增多 + 嗜中性球", "IF：granular IgG、C3", "EM：subepithelial <b>humps</b>（駝峰）"]],
+    ["臨床與檢驗", ["急性 nephritic syndrome；煙燻棕色尿", "C3 ↓、ASO ↑", "兒童多痊癒；成人部分進展"]]
+  ]],
+  ["IgA nephropathy|Berger disease", [
+    ["機轉", ["Galactose-deficient IgA1 形成免疫複合體", "沉積於 mesangium，活化 alternative pathway"]],
+    ["形態", ["IF：<b>mesangial IgA</b>（診斷關鍵）± C3", "LM 變化差異大", "EM：mesangial deposits"]],
+    ["臨床", ["全球最常見的腎絲球疾病", "黏膜感染後 <b>1–2 天</b>內肉眼血尿，反覆發作", "補體正常", "25–50% 在 20 年內進展至 ESRD", "全身型：Henoch-Schönlein purpura（IgA vasculitis）"]]
+  ]],
+  ["Hereditary nephritis|遺傳性腎炎", [
+    ["Alport syndrome", ["Type IV collagen 突變，多為 X-linked（α5 chain）", "腎炎 + 感音神經性耳聾 + 眼部病變", "EM：GBM 分層呈 basketweave（籃織狀）"]],
+    ["Thin basement membrane disease", ["GBM 均勻變薄", "良性家族性血尿"]]
+  ]],
+  ["RPGN|新月體腎絲球腎炎", [
+    "Crescent（新月體）= 壁層上皮細胞增生 + 巨噬細胞，填滿 Bowman space",
+    ["Anti-GBM 型", ["IF：linear IgG", "Goodpasture syndrome", "血漿析離術有效"]],
+    ["免疫複合體型", ["IF：granular", "PSGN、SLE、IgA nephropathy"]],
+    ["Pauci-immune 型", ["IF：陰性", "ANCA 陽性", "Microscopic polyangiitis、GPA"]],
+    "新月體比例愈高，預後愈差"
+  ]],
+  ["Pyelonephritis|腎盂腎炎", [
+    ["急性", [
+      "<i>E. coli</i>（大腸桿菌）最常見",
+      "上行性感染：移生 → 膀胱 → vesicoureteral reflux（膀胱輸尿管逆流）→ intrarenal reflux",
+      "危險因子：女性、阻塞、導尿、糖尿病、懷孕",
+      "形態：皮質膿瘍、腎小管內嗜中性球；腎絲球不受侵犯",
+      "檢驗：膿尿、<b>WBC casts</b>、尿液培養",
+      "併發症：papillary necrosis（糖尿病、阻塞、鐮刀型貧血）、pyonephrosis"
+    ]],
+    ["慢性", [
+      "Reflux nephropathy 最常見；另有慢性阻塞性",
+      "不對稱的粗大皮質疤痕 + blunted calyx（腎盞變鈍）",
+      "Thyroidization（甲狀腺樣變化）",
+      "晚期：高血壓、多尿、CKD"
+    ]]
+  ]],
+  ["Drug-induced TIN|藥物性間質性腎炎", [
+    "藥物：penicillins、利尿劑、PPI、NSAIDs",
+    "機轉：過敏反應，與劑量無關",
+    "形態：間質水腫 + 單核細胞 + eosinophils（嗜酸性球）",
+    "臨床：用藥約 2 週後發燒、皮疹、eosinophilia、creatinine ↑",
+    "處置：停藥可恢復"
+  ]],
+  ["Acute tubular injury|ATI 急性腎小管損傷", [
+    "AKI 最常見的原因",
+    ["Ischemic（缺血性）", ["休克、低血壓、敗血症、失血", "片狀壞死；基底膜可受損"]],
+    ["Nephrotoxic（腎毒性）", ["重金屬、gentamicin、顯影劑", "近曲小管為主；基底膜保留"]],
+    ["機轉", ["近曲小管耗氧高、毒物被濃縮 → 最脆弱", "回滲、圓柱體阻塞、發炎、血管收縮 → GFR ↓"]],
+    ["形態與檢驗", ["上皮起泡、脫落；granular casts", "Muddy brown casts；FENa > 2%"]],
+    ["病程", ["起始 → 少尿期（高血鉀）→ 多尿恢復期（低血鉀）", "去除原因後多可再生恢復"]]
+  ]]
+]],
+
+["第三堂|血管、CKD、囊腫、阻塞、腫瘤", [
+  ["血管疾病", [
+    ["Nephrosclerosis（腎硬化）", ["Hyaline arteriolosclerosis（玻璃樣小動脈硬化）", "雙腎對稱萎縮、表面細顆粒狀", "很少單獨造成腎衰竭"]],
+    ["Malignant hypertension（惡性高血壓）", ["血壓 > 200/120 mmHg", "Fibrinoid necrosis + onion-skin（洋蔥皮樣）", "Flea-bitten kidney", "缺血 → renin ↑ → 惡性循環；內科急症"]],
+    ["Thrombotic microangiopathy|TMA", [
+      "內皮損傷 + 血小板血栓",
+      "MAHA + 血小板低下 ± 腎衰竭",
+      "Shiga toxin–HUS：<i>E. coli</i>，兒童腹瀉後",
+      "Atypical HUS：補體調控異常",
+      "TTP：ADAMTS13 缺乏，神經症狀為主",
+      "檢驗：schistocytes；PT / aPTT 正常（與 DIC 區分）"
+    ]]
+  ]],
+  ["Chronic kidney disease|CKD", [
+    "各種腎病的共同終路",
+    "Nephron loss → 過度過濾 → 結疤",
+    "形態：腎絲球硬化、間質纖維化、腎小管萎縮、動脈壁增厚",
+    "起病隱匿；以蛋白尿、高血壓、azotemia 被發現",
+    "以 eGFR 與 albuminuria 分期"
+  ]],
+  ["囊性腎病|Ciliopathy 纖毛病變", [
+    ["ADPKD", ["體染色體顯性；<i>PKD1</i>（polycystin-1）85–90%、<i>PKD2</i>", "腎臟巨大，佈滿囊腫", "約 40 歲出現症狀：腰痛、血尿、高血壓", "腎外：berry aneurysm、肝囊腫", "約 50 歲進入 ESRD"]],
+    ["ARPKD", ["體染色體隱性；<i>PKHD1</i>（fibrocystin）", "嬰幼兒；雙側海綿狀腎", "先天性肝纖維化"]],
+    ["Nephronophthisis", ["<i>NPHP</i> 基因；腎臟縮小", "皮髓質交界小囊腫", "多尿、多喝", "兒童與年輕成人 ESRD 最常見的遺傳性原因"]],
+    ["非遺傳性", ["Simple cysts：常見、無意義，需與腫瘤鑑別", "透析相關囊腫：腎腫瘤風險大增"]]
+  ]],
+  ["結石與阻塞", [
+    ["Urolithiasis（尿路結石）", [
+      "關鍵：supersaturation（過飽和）",
+      "鈣結石約 80%：特發性高尿鈣最常見",
+      "Struvite 約 10%：<i>Proteus</i>、鹼性尿、staghorn calculi（鹿角狀）",
+      "尿酸 6–7%：酸性尿、痛風、白血病",
+      "Cystine 1–2%：cystinuria；六角形結晶一律異常",
+      "臨床：腎絞痛、血尿、阻塞與感染"
+    ]],
+    ["Hydronephrosis（水腎）", ["腎盂腎盞擴張 + 實質萎縮", "原因：結石、前列腺增生、腫瘤、懷孕", "先傷腎小管濃縮功能", "雙側不完全阻塞 → 多尿；完全阻塞 → 無尿"]]
+  ]],
+  ["腫瘤", [
+    ["Oncocytoma（良性）", ["來自集尿管間細胞", "富含粒線體；中央星狀疤痕"]],
+    ["Renal cell carcinoma|RCC 腎細胞癌", [
+      "危險因子：吸菸、高血壓、肥胖、透析",
+      ["Clear cell（約 65%）", ["<i>VHL</i> 失活（3p）→ HIF 累積 → VEGF → 血管新生", "黃色腫瘤，侵犯腎靜脈", "細胞質透明（脂質、肝醣）"]],
+      ["Papillary（10–15%）", ["<i>MET</i>（7q）", "常多發、雙側"]],
+      ["Chromophobe（5%）", ["低倍體", "核周空暈；預後較好"]],
+      ["臨床", ["血尿最常見", "三徵：血尿、腫塊、腰痛（少同時出現）", "Paraneoplastic：紅血球增多症、高血鈣", "轉移：肺、骨"]]
+    ]],
+    ["Wilms tumor（腎母細胞瘤）", ["兒童（多為 2–5 歲）腹部大腫塊", "三相性：胚芽、基質、上皮", "<i>WT1</i>；WAGR、Denys-Drash、Beckwith-Wiedemann"]]
+  ]]
+]]
+];
+
+const tree = document.getElementById("tree");
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+const names = ["overview", "lecture-1", "lecture-2", "lecture-3"];
+let cur = 0;
+
+function labelHTML(t) {
+  const [a, b] = t.split("|");
+  return b ? a + "<small>" + b + "</small>" : a;
+}
+function build(item, depth) {
+  const node = document.createElement("div");
+  const isLeaf = typeof item === "string";
+  const kids = isLeaf ? null : item[1];
+  node.className = "node " + (isLeaf ? "leaf" : "d" + Math.min(depth, 3));
+  const el = document.createElement(isLeaf ? "div" : "button");
+  el.className = "label";
+  el.innerHTML = labelHTML(isLeaf ? item : item[0]);
+  node.appendChild(el);
+  if (kids) {
+    const box = document.createElement("div");
+    box.className = "kids";
+    kids.forEach((k) => {
+      const br = document.createElement("div");
+      br.className = "branch";
+      br.appendChild(build(k, depth + 1));
+      box.appendChild(br);
+    });
+    const open = depth < 1 || (depth === 1 && cur === 0);
+    box.hidden = !open;
+    el.setAttribute("aria-expanded", String(open));
+    el.addEventListener("click", () => {
+      box.hidden = !box.hidden;
+      el.setAttribute("aria-expanded", String(!box.hidden));
+    });
+    node.appendChild(box);
+  }
+  return node;
+}
+function show(i) {
+  cur = i;
+  tabs.forEach((t, j) => t.setAttribute("aria-selected", String(j === i)));
+  tree.replaceChildren(build(M[i], 0));
+}
+function setAll(open) {
+  tree.querySelectorAll(".kids").forEach((k) => {
+    const root = k.parentElement.classList.contains("d0");
+    k.hidden = root ? false : !open;
+    k.previousElementSibling.setAttribute("aria-expanded", String(!k.hidden));
+  });
+}
+function fromHash() {
+  const i = names.indexOf(location.hash.slice(1));
+  show(i < 0 ? 0 : i);
+}
+tabs.forEach((t) => t.addEventListener("click", () => {
+  const i = +t.dataset.i;
+  try { location.hash = names[i]; } catch (e) {}
+  show(i);
+}));
+document.getElementById("open-all").addEventListener("click", () => setAll(true));
+document.getElementById("close-all").addEventListener("click", () => setAll(false));
+window.addEventListener("hashchange", fromHash);
+fromHash();
+</script>
+</body>
+</html>
